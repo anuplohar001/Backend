@@ -4,7 +4,7 @@ import User from "../model/user.js";
 export default function APIEndpoints(app) {
 
     app.get("/feed", async (req, res) => {
-        const prompts = await Prompt.find({})
+        const prompts = await Prompt.find({}).populate("padmin")
         res.status(200).send({ prompts })
     });
 
