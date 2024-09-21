@@ -2,13 +2,13 @@ import express from 'express'
 import mongoose from 'mongoose';
 import cors from 'cors'
 import { configDotenv } from 'dotenv';
-import apiEndpoints from '../endpoints/apiEndpoints.js';
+import apiEndpoints from '../endpoints/APIEndpoints.js';
 
 configDotenv()
 const app = express();
 
 const corsOptions = {
-    origin: "http://prompts-book.vercel.app",
+    origin: ["http://localhost:5000", "https://prompts-book.vercel.app"],
     methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
     credentials: true,
 };
@@ -19,8 +19,8 @@ app.use(express.json());
 app.use(cors());
 app.get("/", (req, res) => res.send("Express on Vercel"));
 
-await mongoose.connect(process.env.MONGODB_URI).then(() => {
-    console.log("Successfully connected")
+mongoose.connect(process.env.MONGODB_URI).then(() => {
+        console.log("Successfully connected")
 });
 
 apiEndpoints(app)
