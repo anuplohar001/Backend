@@ -16,6 +16,16 @@ const newPrompt = new mongoose.Schema({
         ref: 'User'
     },
 
+    comment: [{
+        content:String,
+        userid: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    }],
+
+    like: [mongoose.Schema.Types.ObjectId]
+
 })
 
 
