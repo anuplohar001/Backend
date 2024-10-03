@@ -133,6 +133,19 @@ export default function APIEndpoints(app) {
         }
     })
 
+    app.post("/postStory", async (req, res) => {
+        const { story, userid } = req.body
+        console.log(req.body);
+        
+        try {
+            const newp = await Story.create({ story, userid })
+            newp.save()
+            return res.status(200).send({ message: "Story created" })
+        } catch (error) {
+            return res.status(500).send({ message: message })
+        }
+    })
+
     app.put("/postComment", async (req, res) => {
         const { comment, padmin, postid } = req.body
 
@@ -156,6 +169,19 @@ export default function APIEndpoints(app) {
                 const prompt = await Prompt.findByIdAndUpdate({ _id: postid }, { $pull: { like:userid } })
             }
             return res.status(200).send({message: "Like/Unlike"})
+        } catch (error) {
+            return res.status(500).send({message: message})
+        }
+    })
+
+    app.post("/registration", async (req, res) => {
+        const { username, phone, email, password } = req.body
+        console.log(req.body);
+        
+        try {
+            const newuser = await User.create({ email, username, phone, password })
+            await newuser.save()
+            return res.status(200).send({message: "User created"})
         } catch (error) {
             return res.status(500).send({message: message})
         }
