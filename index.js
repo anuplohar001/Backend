@@ -7,6 +7,7 @@ import apiEndpoints from './endpoints/apiEndpoints.js';
 import http from "http";
 import { Server } from "socket.io";
 import moment from 'moment-timezone'
+const PORT = process.env.PORT || 4000;
 
 configDotenv()
 const app = express();
@@ -60,10 +61,6 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
 
 apiEndpoints(app)
 
-
-
-export default (req, res) => {
-    server.emit('request', req, res);
-};
-
-
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
