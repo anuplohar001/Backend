@@ -2,8 +2,8 @@ import express from 'express'
 import mongoose from 'mongoose';
 import cors from 'cors'
 import { configDotenv } from 'dotenv';
-import Message from '../model/message.js';
-import apiEndpoints from '../endpoints/APIEndpoints.js';
+import Message from './model/message.js';
+import apiEndpoints from './endpoints/APIEndpoints.js';
 import http from "http";
 import { Server } from "socket.io";
 import moment from 'moment-timezone'
