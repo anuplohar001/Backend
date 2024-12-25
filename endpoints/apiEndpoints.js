@@ -1,11 +1,36 @@
 import Prompt from "../model/prompts.js"
 import User from "../model/user.js";
 import Story from "../model/story.js";
-
+import Message from "../model/message.js";
 const message = "Something went wrong"
 
 
 export default function APIEndpoints(app) {
+
+    app.get('/messages', async (req, res) => {
+        const messages = await Message.find().sort({timestamp: -1});
+        console.log(messages);
+        
+        try {
+            if (messages)
+                return res.status(200).send({ messages })
+            else
+                return res.status(200).send({ message: "No messages" })
+        } catch (error) {
+            return res.status(500).send({ message: message })
+        }
+        
+    });
+
+
+    app.get("/users", async (req, res) => {
+        const users = await User.find()
+        try {
+            return res.status(200).send({users})
+        } catch (error) {
+            return res.status(500).send({ message: message })
+        }
+    })
 
     //GET API
     app.get("/feed", async (req, res) => {
