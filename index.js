@@ -2,21 +2,15 @@ import express from 'express'
 import mongoose from 'mongoose';
 import cors from 'cors'
 import { configDotenv } from 'dotenv';
-import Message from './model/message.js';
+import Message from './model/chat.js';
 import apiEndpoints from './endpoints/apiEndpoints.js';
 import http from "http";
 import { Server } from "socket.io";
 import moment from 'moment-timezone'
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 
 configDotenv()
 const app = express();
-const corsOptions = {
-    origin: ["http://localhost:5000", "https://prompts-book.vercel.app"],
-    methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
-    credentials: true,
-};
-app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cors());
 
@@ -25,8 +19,8 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5000", // Replace this with your frontend domain in production
-        methods: ["GET", "POST"]
+        origin: ["http://localhost:5000", "https://prompts-book.vercel.app"], 
+        methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
     }
 });
 
@@ -44,6 +38,16 @@ io.on('connection', (socket) => {
         await message.save();        
         io.emit('receiveMessage', message);
         
+    });
+
+    socket.on('typing', (data) => {
+        // Broadcast typing event to the recipient
+        socket.broadcast.emit('userTyping', data);
+    });
+
+    socket.on('stopTyping', (data) => {
+        // Broadcast stopTyping event to the recipient
+        socket.broadcast.emit('userStoppedTyping', data);
     });
 
     socket.on('disconnect', () => {

@@ -1,7 +1,7 @@
 import Prompt from "../model/prompts.js"
 import User from "../model/user.js";
 import Story from "../model/story.js";
-import Message from "../model/message.js";
+import Message from "../model/chat.js";
 const message = "Something went wrong"
 
 
@@ -9,8 +9,6 @@ export default function APIEndpoints(app) {
 
     app.get('/messages', async (req, res) => {
         const messages = await Message.find().sort({timestamp: -1});
-        console.log(messages);
-        
         try {
             if (messages)
                 return res.status(200).send({ messages })
