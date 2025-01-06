@@ -19,7 +19,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ["http://localhost:5000", "https://prompts-book.vercel.app"], 
+        origin: ["http://localhost:5000", "https://prompts-book.vercel.app", "http://localhost:5500", "https://beat-box-ten.vercel.app"], 
         methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
     }
 });
