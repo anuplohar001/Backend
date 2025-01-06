@@ -9,6 +9,10 @@ const MessageSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+    postid: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'prompts'
+    },
     text: {
         type: String,
         required: true

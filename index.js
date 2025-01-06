@@ -31,13 +31,18 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
 
     socket.on('sendMessage', async (data) => {
-        console.log(data)
         const date = new Date();        
         const istTime = moment.utc(date).tz("Asia/Kolkata").format("YYYY-MM-DD hh:mm:ss");        
-        const message = new Message({from: data.from, to: data.to, text: data.text, date: istTime});
-        await message.save();        
-        io.emit('receiveMessage', message);
-        
+        const message = new Message({from: data.from, to: data.to, postid:data.postid, text: data.text, date: istTime});
+        await message.save();  
+        const populatedMessage = await Message.findById(message._id)
+            .populate({
+                path: 'postid',
+                populate: {
+                    path: 'padmin',
+                },
+            });           
+        io.emit('receiveMessage', populatedMessage);        
     });
 
     socket.on('typing', (data) => {

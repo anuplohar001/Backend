@@ -8,7 +8,12 @@ const message = "Something went wrong"
 export default function APIEndpoints(app) {
 
     app.get('/messages', async (req, res) => {
-        const messages = await Message.find().sort({timestamp: -1});
+        const messages = await Message.find().populate({
+            path: 'postid',
+            populate: {
+                path: 'padmin',
+            },
+        }).sort({timestamp: -1}); 
         try {
             if (messages)
                 return res.status(200).send({ messages })
