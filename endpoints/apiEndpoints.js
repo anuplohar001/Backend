@@ -7,6 +7,37 @@ const message = "Something went wrong"
 
 export default function APIEndpoints(app) {
 
+    app.get('/gitsongs', async (req, res) => {
+        try {
+            const response = await fetch(`https://api.github.com/repos/anuplohar001/BeatBox/contents/songs/`, {
+                headers: {
+                    "Authorization": `token ${process.env.GITHUB_TOKEN}`
+                }
+            });
+            if (!response.ok) throw new Error('Network response was not ok ' + response.statusText);
+            let data = await response.json();
+            return res.status(200).send({ data })
+        } catch (error) {
+            return res.status(500).send({ message: message })
+        }
+    })
+
+    app.get('/gitfolder/:folder', async (req, res) => {
+        const folder = req.params.folder
+        try {
+            const response = await fetch(`https://api.github.com/repos/anuplohar001/BeatBox/contents/songs/${folder}`, {
+                headers: {
+                    "Authorization": `token ${process.env.GITHUB_TOKEN}`
+                }
+            });
+            if (!response.ok) throw new Error('Network response was not ok ' + response.statusText);
+            let data = await response.json();
+            return res.status(200).send({ data })
+        } catch (error) {
+            return res.status(500).send({ message: message })
+        }
+    })
+
     app.get('/messages', async (req, res) => {
         const messages = await Message.find().populate({
             path: 'postid',
