@@ -21,7 +21,7 @@ export default function APIEndpoints(app) {
         port: 587,
         secure: false,
         auth: {
-          user: process.env.MAIL_USER, // your gmail
+          user: process.env.BREVO_USER, // your gmail
           pass: process.env.MAIL_PASS, // app password
         },
         tls: {
