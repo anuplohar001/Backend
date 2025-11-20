@@ -1,75 +1,82 @@
-import express from 'express'
-import mongoose from 'mongoose';
-import cors from 'cors'
-import { configDotenv } from 'dotenv';
-import Message from './model/chat.js';
-import apiEndpoints from './endpoints/apiEndpoints.js';
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import { configDotenv } from "dotenv";
+import Message from "./model/chat.js";
+import apiEndpoints from "./endpoints/apiEndpoints.js";
 import http from "http";
 import { Server } from "socket.io";
-import moment from 'moment-timezone'
+import moment from "moment-timezone";
 const PORT = process.env.PORT || 3000;
+const corsOptions = {
+  origin: [
+    "http://localhost:5000",
+    "https://prompts-book.vercel.app",
+    "http://localhost:5500",
+    "http://localhost:5173",
+    "https://beat-box-ten.vercel.app",
+    "https://anupp-portfolio.vercel.app/",
+  ],
+  methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
+};
 
-configDotenv()
+configDotenv();
 const app = express();
 app.use(express.json());
-app.use(cors());
-
-
+app.use(cors(corsOptions));
 
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: ["http://localhost:5000", "https://prompts-book.vercel.app", "http://localhost:5500", "https://beat-box-ten.vercel.app"], 
-        methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
-    }
+  cors: corsOptions,
 });
 
-
-
-
-
-io.on('connection', (socket) => {
-
-    socket.on('sendMessage', async (data) => {
-        const date = new Date();        
-        const istTime = moment.utc(date).tz("Asia/Kolkata").format("YYYY-MM-DD hh:mm:ss");        
-        const message = new Message({from: data.from, to: data.to, postid:data.postid, text: data.text, date: istTime});
-        await message.save();  
-        const populatedMessage = await Message.findById(message._id)
-            .populate({
-                path: 'postid',
-                populate: {
-                    path: 'padmin',
-                },
-            });           
-        io.emit('receiveMessage', populatedMessage);        
+io.on("connection", (socket) => {
+  socket.on("sendMessage", async (data) => {
+    const date = new Date();
+    const istTime = moment
+      .utc(date)
+      .tz("Asia/Kolkata")
+      .format("YYYY-MM-DD hh:mm:ss");
+    const message = new Message({
+      from: data.from,
+      to: data.to,
+      postid: data.postid,
+      text: data.text,
+      date: istTime,
     });
-
-    socket.on('typing', (data) => {
-        // Broadcast typing event to the recipient
-        socket.broadcast.emit('userTyping', data);
+    await message.save();
+    const populatedMessage = await Message.findById(message._id).populate({
+      path: "postid",
+      populate: {
+        path: "padmin",
+      },
     });
+    io.emit("receiveMessage", populatedMessage);
+  });
 
-    socket.on('stopTyping', (data) => {
-        // Broadcast stopTyping event to the recipient
-        socket.broadcast.emit('userStoppedTyping', data);
-    });
+  socket.on("typing", (data) => {
+    // Broadcast typing event to the recipient
+    socket.broadcast.emit("userTyping", data);
+  });
 
-    socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
-    });
+  socket.on("stopTyping", (data) => {
+    // Broadcast stopTyping event to the recipient
+    socket.broadcast.emit("userStoppedTyping", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
 });
-
-
 
 app.get("/", (req, res) => res.send("Express on Vercel"));
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
-        console.log("Successfully connected")
+  console.log("Successfully connected");
 });
 
-apiEndpoints(app)
+apiEndpoints(app);
 
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
