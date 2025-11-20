@@ -17,7 +17,9 @@ export default function APIEndpoints(app) {
     try {
       // Nodemailer transporter using Gmail
       const transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: "smtp-relay.brevo.com",
+        port: 587,
+        secure: false,
         auth: {
           user: process.env.MAIL_USER, // your gmail
           pass: process.env.MAIL_PASS, // app password
